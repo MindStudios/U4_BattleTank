@@ -27,7 +27,6 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 UTankAimingComponent* ATank::GetAimComponent() const
 {
-	if (!TankAimingComponent) return nullptr;
 	return TankAimingComponent;
 }
 

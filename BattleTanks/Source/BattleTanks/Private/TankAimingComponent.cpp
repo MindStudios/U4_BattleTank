@@ -23,6 +23,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 		this,
 		OUT ProjectileVelocity,
 		GetBarrel()->GetSocketLocation(FName("ExitPoint")),
+		//GetBarrel()->GetComponentLocation(),
 		HitLocation,
 		LaunchSpeed
 	)) {
@@ -34,12 +35,17 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 
 void UTankAimingComponent::MoveBarrel(FVector AimDirection)
 {
-	if (!Barrel) return;
+	if (!Barrel) {
+		UE_LOG(LogTemp, Error, TEXT("Barrel not found"));
+		return;
+	}
 
 	FRotator BarrelRotator = GetBarrel()->GetForwardVector().Rotation();
 	FRotator AimAsRotator = AimDirection.Rotation();
 	FRotator DeltaRotator = AimAsRotator - BarrelRotator;
-	GetBarrel()->Elevate(5);
+
+	UE_LOG(LogTemp, Warning, TEXT("Aim As Rotator: %s"), *DeltaRotator.ToString());
+	GetBarrel()->Elevate(5); // TODO remove magic number
 }
 
 void UTankAimingComponent::SetBarrel(UTankBarrel* BarrelToSet)
