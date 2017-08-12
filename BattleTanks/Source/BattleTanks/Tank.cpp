@@ -42,13 +42,20 @@ void ATank::AimAt(FVector HitLocation)
 
 void ATank::Fire()
 {
-	UE_LOG(LogTemp, Error, TEXT("Fire!"));
+	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
+	auto Barrel = GetAimComponent()->GetBarrel();
 
-	GetWorld()->SpawnActor<AProjectile>(
-		ProjectileBlueprint,
-		GetAimComponent()->GetBarrel()->GetSocketLocation(FName("ExitPoint")),
-		GetAimComponent()->GetBarrel()->GetSocketRotation(FName("ExitPoint"))
-	);
+	if (Barrel && isReloaded) {
+		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
+				ProjectileBlueprint,
+				Barrel->GetSocketLocation(FName("ExitPoint")),
+				Barrel->GetSocketRotation(FName("ExitPoint"))
+			);
+
+		Projectile->Launch(LaunchSpeed);
+
+		LastFireTime = FPlatformTime::Seconds();
+	}
 }
 
 void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)

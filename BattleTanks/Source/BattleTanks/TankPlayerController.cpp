@@ -2,20 +2,13 @@
 
 #include "TankPlayerController.h"
 #include "Tank.h"
-#include "GameFramework/Actor.h" // Intelisense Bug Fix
+#include "GameFramework/Actor.h" // Intellisense Bug Fix
 
 #define OUT
 
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	ControlledTank = GetControlledTank();
-	if (ControlledTank == nullptr) {
-		UE_LOG(LogTemp, Warning, TEXT("Controller not possessing a tank"));
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("PlayerController possessing: %s"), *ControlledTank->GetName());
-	}
 }
 
 void ATankPlayerController::Tick(float DeltaTime)
@@ -24,18 +17,14 @@ void ATankPlayerController::Tick(float DeltaTime)
 	AimTowardsCrosshair();
 }
 
-ATank* ATankPlayerController::GetControlledTank() const
-{
-	return Cast<ATank>(GetPawn());
-}
-
 void ATankPlayerController::AimTowardsCrosshair()
 {
-	if (ControlledTank == nullptr) { return; }
+	auto ControlledTank = Cast<ATank>(GetPawn());
+	if (!ControlledTank) { return; }
 
 	FVector HitLocation; // Out Parameter
 	if (GetSightRayHitLocation(OUT HitLocation)) {
-		GetControlledTank()->AimAt(HitLocation);
+		ControlledTank->AimAt(HitLocation);
 	}
 }
 

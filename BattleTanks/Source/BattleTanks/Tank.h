@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "Tank.generated.h"
 
+// Forward Declaration
 class UTankAimingComponent;
 class UTankBarrel;
 class UTankTurrent;
@@ -46,6 +47,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = Firing)
 	float LaunchSpeed = 10000.f;
 
-	UPROPERTY(EditAnywhere, Category = Setup)
+	UPROPERTY(EditAnywhere, Category = Firing)
+	float ReloadTimeInSeconds = 2;
+
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	TSubclassOf<AProjectile> ProjectileBlueprint;
+
+private:
+	double LastFireTime = 0;
+
 };
