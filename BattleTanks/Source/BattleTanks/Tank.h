@@ -3,9 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TankAimingComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Tank.generated.h"
+
+class UTankAimingComponent;
+class UTankBarrel;
+class UTankTurrent;
 
 UCLASS()
 class BATTLETANKS_API ATank : public APawn
@@ -32,6 +35,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Setup)
 	void SetBarrelReference(UTankBarrel* BarrelToSet);
+
+	UFUNCTION(BlueprintCallable, Category = Setup)
+	void SetTurrentReference(UTankTurrent* TurrentToSet);
 
 	UPROPERTY(EditAnywhere)
 	float LaunchSpeed = 100000.f; // TODO find sensible default (current at 1000 m/s)
