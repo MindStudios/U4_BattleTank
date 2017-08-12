@@ -10,7 +10,7 @@ UTankAimingComponent::UTankAimingComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true; //TODO should this tick?
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
@@ -34,12 +34,11 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 	)) {
 		FVector AimDirection = ProjectileVelocity.GetSafeNormal();
 		MoveBarrel(AimDirection);
-		MoveTurrent(AimDirection);
 
-		UE_LOG(LogTemp, Warning, TEXT("%f - D: %s, V: %s"), Time, *AimDirection.ToString(), *ProjectileVelocity.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("%f - D: %s, V: %s"), Time, *AimDirection.ToString(), *ProjectileVelocity.ToString());
 	}
 	else {
-		UE_LOG(LogTemp, Warning, TEXT("%f - No Aim Solution found"), Time);
+		//UE_LOG(LogTemp, Warning, TEXT("%f - No Aim Solution found"), Time);
 	};
 }
 
@@ -55,20 +54,6 @@ void UTankAimingComponent::MoveBarrel(FVector AimDirection)
 	FRotator DeltaRotator = AimAsRotator - BarrelRotator;
 
 	GetBarrel()->Elevate(DeltaRotator.Pitch);
-}
-
-
-void UTankAimingComponent::MoveTurrent(FVector AimDirection)
-{
-	if (!Turrent) {
-		UE_LOG(LogTemp, Error, TEXT("Barrel not found"));
-		return;
-	}
-
-	FRotator BarrelRotator = GetTurrent()->GetForwardVector().Rotation();
-	FRotator AimAsRotator = AimDirection.Rotation();
-	FRotator DeltaRotator = AimAsRotator - BarrelRotator;
-
 	GetTurrent()->Rotate(DeltaRotator.Yaw);
 }
 

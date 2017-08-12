@@ -24,8 +24,6 @@ public:
 
 	void MoveBarrel(FVector AimDirection);
 
-	void MoveTurrent(FVector AimDirection);
-
 	void SetBarrel(UTankBarrel* BarrelToSet);
 
 	UTankBarrel* GetBarrel() const;
