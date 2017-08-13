@@ -3,8 +3,10 @@
 #include "Tank.h"
 #include "TankBarrel.h"
 #include "TankTurrent.h"
+#include "TankTrack.h"
 #include "Projectile.h"
 #include "TankAimingComponent.h"
+#include "TankMovementComponent.h"
 
 
 // Sets default values
@@ -56,6 +58,13 @@ void ATank::Fire()
 
 		LastFireTime = FPlatformTime::Seconds();
 	}
+}
+
+void ATank::MoveTrack(UTankTrack* Track, float Throttle) // TODO Remove this function
+{
+	if (!Track) return;
+
+	Track->Move(Throttle);
 }
 
 void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)

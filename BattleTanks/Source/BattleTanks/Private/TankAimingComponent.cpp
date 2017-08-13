@@ -16,7 +16,6 @@ UTankAimingComponent::UTankAimingComponent()
 void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 {
 	if (!Barrel) return;
-	float Time = GetWorld()->GetTimeSeconds();
 
 	FVector ProjectileVelocity;
 	if (UGameplayStatics::SuggestProjectileVelocity(
