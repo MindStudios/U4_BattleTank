@@ -2,6 +2,7 @@
 
 #include "TankMovementComponent.h"
 #include "TankTrack.h"
+#include "Runtime/Engine/Classes/GameFramework/NavMovementComponent.h"
 
 void UTankMovementComponent::SetTracks(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet)
 {
@@ -37,4 +38,22 @@ void UTankMovementComponent::MoveLeft(float Throw)
 	RightTrack->Move(Throw);
 }
 
+void UTankMovementComponent::MoveTracks(float LThrow, float RThrow)
+{
+	if (!LeftTrack || !RightTrack) return;
+	LeftTrack->Move(-LThrow);
+	RightTrack->Move(RThrow);
+}
+
+void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed)
+{
+	auto TankForward = GetOwner()->GetActorForwardVector().GetSafeNormal();
+	auto AIForwardIntention = MoveVelocity.GetSafeNormal();
+
+	auto ForwardThrow = FVector::DotProduct(TankForward, AIForwardIntention);
+	MoveForward(ForwardThrow);
+
+	auto RightThrow = FVector::CrossProduct(TankForward, AIForwardIntention).Z;
+	MoveRight(RightThrow);
+}
 
