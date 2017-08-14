@@ -12,35 +12,35 @@ void UTankMovementComponent::SetTracks(UTankTrack* LeftTrackToSet, UTankTrack* R
 
 void UTankMovementComponent::MoveForward(float Throw)
 {
-	if (!LeftTrack || !RightTrack) return;
+	if (!ensureMsgf((LeftTrack && RightTrack), TEXT("Left Track or Right Track is a null pointer"))) return;
 	LeftTrack->Move(Throw);
 	RightTrack->Move(Throw);
 }
 
 void UTankMovementComponent::MoveBack(float Throw)
 {
-	if (!LeftTrack || !RightTrack) return;
+	if (!ensureMsgf((LeftTrack && RightTrack), TEXT("Left Track or Right Track is a null pointer"))) return;
 	LeftTrack->Move(-Throw);
 	RightTrack->Move(-Throw);
 }
 
 void UTankMovementComponent::MoveRight(float Throw)
 {
-	if (!LeftTrack || !RightTrack) return;
+	if (!ensureMsgf((LeftTrack && RightTrack), TEXT("Left Track or Right Track is a null pointer"))) return;
 	LeftTrack->Move(Throw);
 	RightTrack->Move(-Throw);
 }
 
 void UTankMovementComponent::MoveLeft(float Throw)
 {
-	if (!LeftTrack || !RightTrack) return;
+	if (!ensureMsgf((LeftTrack && RightTrack), TEXT("Left Track or Right Track is a null pointer"))) return;
 	LeftTrack->Move(-Throw);
 	RightTrack->Move(Throw);
 }
 
 void UTankMovementComponent::MoveTracks(float LThrow, float RThrow)
 {
-	if (!LeftTrack || !RightTrack) return;
+	if (!ensureMsgf((LeftTrack && RightTrack), TEXT("Left Track or Right Track is a null pointer"))) return;
 	LeftTrack->Move(-LThrow);
 	RightTrack->Move(RThrow);
 }

@@ -47,7 +47,7 @@ void ATank::Fire()
 	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
 	auto Barrel = GetAimComponent()->GetBarrel();
 
-	if (Barrel && isReloaded) {
+	if (ensureMsgf(Barrel, TEXT("Barrel is a null pointer")) && isReloaded) {
 		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
 				ProjectileBlueprint,
 				Barrel->GetSocketLocation(FName("ExitPoint")),
@@ -62,7 +62,7 @@ void ATank::Fire()
 
 void ATank::MoveTrack(UTankTrack* Track, float Throttle) // TODO Remove this function
 {
-	if (!Track) return;
+	if (!ensureMsgf(Track, TEXT("Track is a null pointer"))) return;
 
 	Track->Move(Throttle);
 }

@@ -15,7 +15,7 @@ UTankAimingComponent::UTankAimingComponent()
 
 void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 {
-	if (!Barrel) return;
+	if (!ensureMsgf(Barrel, TEXT("Barrel is a null pointer"))) return;
 
 	FVector ProjectileVelocity;
 	if (UGameplayStatics::SuggestProjectileVelocity(
@@ -37,10 +37,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 
 void UTankAimingComponent::MoveBarrel(FVector AimDirection)
 {
-	if (!Barrel) {
-		UE_LOG(LogTemp, Error, TEXT("Barrel not found"));
-		return;
-	}
+	if (!ensureMsgf(Barrel, TEXT("Barrel is a null pointer"))) return;
 
 	FRotator BarrelRotator = GetBarrel()->GetForwardVector().Rotation();
 	FRotator AimAsRotator = AimDirection.Rotation();

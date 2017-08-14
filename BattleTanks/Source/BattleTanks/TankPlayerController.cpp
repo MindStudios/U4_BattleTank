@@ -2,6 +2,7 @@
 
 #include "TankPlayerController.h"
 #include "Tank.h"
+#include "TankAimingComponent.h"
 #include "GameFramework/Actor.h" // Intellisense Bug Fix
 
 #define OUT
@@ -9,6 +10,13 @@
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	auto AimingComponent = GetControlledTank()->FindComponentByClass<UTankAimingComponent>();
+	if (AimingComponent) {
+		FoundAimingComponent(AimingComponent);
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Aiming Componenent not found"));
+	}
 }
 
 void ATankPlayerController::Tick(float DeltaTime)
@@ -17,10 +25,15 @@ void ATankPlayerController::Tick(float DeltaTime)
 	AimTowardsCrosshair();
 }
 
+ATank* ATankPlayerController::GetControlledTank() const
+{
+	return Cast<ATank>(GetPawn());
+}
+
 void ATankPlayerController::AimTowardsCrosshair()
 {
-	auto ControlledTank = Cast<ATank>(GetPawn());
-	if (!ControlledTank) { return; }
+	auto ControlledTank = GetControlledTank();
+	if (!ensureMsgf(ControlledTank, TEXT("Tank is a null pointer"))) { return; }
 
 	FVector HitLocation; // Out Parameter
 	if (GetSightRayHitLocation(OUT HitLocation)) {

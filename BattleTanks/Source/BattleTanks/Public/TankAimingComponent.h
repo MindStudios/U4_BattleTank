@@ -6,6 +6,15 @@
 #include "Components/ActorComponent.h"
 #include "TankAimingComponent.generated.h"
 
+// Enum for aiming states
+UENUM()
+enum class ECrosshairState : uint8
+{
+	Locked,
+	Aiming,
+	Reloading
+};
+
 // Forward Declaration
 class UTankBarrel;
 class UTankTurrent;
@@ -22,18 +31,20 @@ public:
 
 	void AimAt(FVector HitLocation, float LaunchSpeed);
 
-	void MoveBarrel(FVector AimDirection);
-
 	void SetBarrel(UTankBarrel* BarrelToSet);
-
 	UTankBarrel* GetBarrel() const;
-	
-	UTankTurrent* GetTurrent() const;
 
 	void SetTurrent(UTankTurrent* val);
+	UTankTurrent* GetTurrent() const;
+
+protected:
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	ECrosshairState CrosshairState = ECrosshairState::Reloading;
+
 
 private:
 	UTankBarrel* Barrel = nullptr;
-
 	UTankTurrent* Turrent = nullptr;
+
+	void MoveBarrel(FVector AimDirection);
 };
