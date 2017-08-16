@@ -10,7 +10,7 @@
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	auto AimingComponent = GetControlledTank()->FindComponentByClass<UTankAimingComponent>();
+	AimingComponent = GetControlledTank()->FindComponentByClass<UTankAimingComponent>();
 	if (AimingComponent) {
 		FoundAimingComponent(AimingComponent);
 	}
@@ -32,12 +32,11 @@ ATank* ATankPlayerController::GetControlledTank() const
 
 void ATankPlayerController::AimTowardsCrosshair()
 {
-	auto ControlledTank = GetControlledTank();
-	if (!ensureMsgf(ControlledTank, TEXT("Tank is a null pointer"))) { return; }
+	if (!ensureMsgf(AimingComponent, TEXT("Aiming Component is a null pointer"))) { return; }
 
 	FVector HitLocation; // Out Parameter
 	if (GetSightRayHitLocation(OUT HitLocation)) {
-		ControlledTank->AimAt(HitLocation);
+		AimingComponent->AimAt(HitLocation);
 	}
 }
 

@@ -41,6 +41,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	float LineTraceRange = 1000000.f;
 
+	UTankAimingComponent* AimingComponent = nullptr;
+
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	ATank* GetControlledTank() const;
