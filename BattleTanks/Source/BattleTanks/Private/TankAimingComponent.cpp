@@ -63,7 +63,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation)
 		false,
 		0,
 		0,
-		ESuggestProjVelocityTraceOption::TraceFullPath // Parameter must be present to prevent bug
+		ESuggestProjVelocityTraceOption::DoNotTrace // Parameter must be present to prevent bug
 	)) {
 		AimDirection = ProjectileVelocity.GetSafeNormal();
 		MoveBarrel(AimDirection);
@@ -75,7 +75,10 @@ void UTankAimingComponent::Fire()
 {
 	auto Barrel = GetBarrel();
 
-	if (ensureMsgf(Barrel, TEXT("Barrel is a null pointer")) && GetCrosshairState() != ECrosshairState::Reloading && GetAmmo() > 0) {
+	if (ensureMsgf(ProjectileBlueprint, TEXT("Projectile Blueprint not found")) 
+		&& ensureMsgf(Barrel, TEXT("Barrel is a null pointer")) 
+		&& GetCrosshairState() != ECrosshairState::Reloading 
+		&& GetAmmo() > 0) {
 		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
 			ProjectileBlueprint,
 			Barrel->GetSocketLocation(FName("ExitPoint")),
@@ -97,17 +100,14 @@ void UTankAimingComponent::MoveBarrel(FVector AimDirection)
 	FRotator BarrelRotator = GetBarrel()->GetForwardVector().Rotation();
 	FRotator AimAsRotator = AimDirection.Rotation();
 	FRotator DeltaRotator = AimAsRotator - BarrelRotator;
-	
-	if (DeltaRotator.Yaw < -180) {
-		GetTurrent()->Rotate(DeltaRotator.Yaw + 360);
-	}
-	else if (DeltaRotator.Yaw > 180) {
-		GetTurrent()->Rotate(DeltaRotator.Yaw - 360);
-	}
-	else {
+
+	GetBarrel()->Elevate(DeltaRotator.Pitch);
+	if (FMath::Abs(DeltaRotator.Yaw) < 180) {
 		GetTurrent()->Rotate(DeltaRotator.Yaw);
 	}
-	GetBarrel()->Elevate(DeltaRotator.Pitch);
+	else {
+		GetTurrent()->Rotate(-DeltaRotator.Yaw);
+	}
 }
 
 UTankBarrel* UTankAimingComponent::GetBarrel() const
