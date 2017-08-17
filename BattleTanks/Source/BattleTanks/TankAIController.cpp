@@ -22,7 +22,10 @@ void ATankAIController::Tick(float DeltaTime)
 		// Aim towards player
 		auto AimingComponent = Cast<ATank>(GetPawn())->FindComponentByClass<UTankAimingComponent>();
 		AimingComponent->AimAt(PlayerTank->GetActorLocation());
-		AimingComponent->Fire();
+
+		if (AimingComponent->GetCrosshairState() == ECrosshairState::Locked) {
+			AimingComponent->Fire();
+		}
 	}
 }
 

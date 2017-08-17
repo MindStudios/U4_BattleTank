@@ -12,7 +12,8 @@ enum class ECrosshairState : uint8
 {
 	Locked,
 	Aiming,
-	Reloading
+	Reloading,
+	OutOfAmmo
 };
 
 // Forward Declaration
@@ -25,6 +26,11 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BATTLETANKS_API UTankAimingComponent : public UActorComponent
 {
 	GENERATED_BODY()
+
+
+protected:
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	ECrosshairState CrosshairState = ECrosshairState::Reloading;
 
 public:
 	// Sets default values for this component's properties
@@ -52,19 +58,29 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Firing")
 	float ReloadTimeInSeconds = 2;
 
-protected:
-	UPROPERTY(BlueprintReadOnly, Category = "State")
-	ECrosshairState CrosshairState = ECrosshairState::Reloading;
+	ECrosshairState GetCrosshairState() const;
+	void SetCrosshairState(ECrosshairState val);
 
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	void SetAmmo(int val);
+
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	int GetAmmo() const;
 
 private:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
+
+	bool IsBarrelMoving();
+	void MoveBarrel(FVector AimDirection);
+
 	UTankBarrel* Barrel = nullptr;
 	UTankTurrent* Turrent = nullptr;
 
-	void MoveBarrel(FVector AimDirection);
-
 	double LastFireTime = 0;
+	FVector AimDirection = FVector();
+
+	UPROPERTY(EditAnywhere, Category = "Firing")
+	int TotalAmmo = 3;
 };

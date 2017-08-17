@@ -23,10 +23,30 @@ void UTankAimingComponent::BeginPlay()
 
 void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
-	if ((FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds)
-	{
-		CrosshairState = ECrosshairState::Aiming;
+	if (GetAmmo() > 0) {
+		if ((FPlatformTime::Seconds() - LastFireTime) < ReloadTimeInSeconds)
+		{
+			SetCrosshairState(ECrosshairState::Reloading);
+		}
+		else if (IsBarrelMoving()) {
+			SetCrosshairState(ECrosshairState::Aiming);
+		}
+		else {
+			SetCrosshairState(ECrosshairState::Locked);
+		}
 	}
+	else {
+		SetCrosshairState(ECrosshairState::OutOfAmmo);
+	}
+}
+
+bool UTankAimingComponent::IsBarrelMoving()
+{
+	if (!ensureMsgf(Barrel, TEXT("Barrel is a null pointer"))) return false;
+
+	if (AimDirection.Equals(GetBarrel()->GetForwardVector(), .01f)) return true;
+
+	return false;
 }
 
 void UTankAimingComponent::AimAt(FVector HitLocation)
@@ -45,7 +65,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation)
 		0,
 		ESuggestProjVelocityTraceOption::TraceFullPath // Parameter must be present to prevent bug
 	)) {
-		FVector AimDirection = ProjectileVelocity.GetSafeNormal();
+		AimDirection = ProjectileVelocity.GetSafeNormal();
 		MoveBarrel(AimDirection);
 		//UE_LOG(LogTemp, Warning, TEXT("%f - D: %s, V: %s"), Time, *AimDirection.ToString(), *ProjectileVelocity.ToString());
 	};
@@ -55,7 +75,7 @@ void UTankAimingComponent::Fire()
 {
 	auto Barrel = GetBarrel();
 
-	if (ensureMsgf(Barrel, TEXT("Barrel is a null pointer")) && CrosshairState == ECrosshairState::Aiming) {
+	if (ensureMsgf(Barrel, TEXT("Barrel is a null pointer")) && GetCrosshairState() != ECrosshairState::Reloading && GetAmmo() > 0) {
 		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
 			ProjectileBlueprint,
 			Barrel->GetSocketLocation(FName("ExitPoint")),
@@ -65,7 +85,8 @@ void UTankAimingComponent::Fire()
 		Projectile->Launch(LaunchSpeed);
 
 		LastFireTime = FPlatformTime::Seconds();
-		CrosshairState = ECrosshairState::Reloading;
+		SetCrosshairState(ECrosshairState::Reloading);
+		SetAmmo(GetAmmo() - 1);
 	}
 }
 
@@ -76,9 +97,17 @@ void UTankAimingComponent::MoveBarrel(FVector AimDirection)
 	FRotator BarrelRotator = GetBarrel()->GetForwardVector().Rotation();
 	FRotator AimAsRotator = AimDirection.Rotation();
 	FRotator DeltaRotator = AimAsRotator - BarrelRotator;
-
+	
+	if (DeltaRotator.Yaw < -180) {
+		GetTurrent()->Rotate(DeltaRotator.Yaw + 360);
+	}
+	else if (DeltaRotator.Yaw > 180) {
+		GetTurrent()->Rotate(DeltaRotator.Yaw - 360);
+	}
+	else {
+		GetTurrent()->Rotate(DeltaRotator.Yaw);
+	}
 	GetBarrel()->Elevate(DeltaRotator.Pitch);
-	GetTurrent()->Rotate(DeltaRotator.Yaw);
 }
 
 UTankBarrel* UTankAimingComponent::GetBarrel() const
@@ -99,4 +128,24 @@ UTankTurrent* UTankAimingComponent::GetTurrent() const
 void UTankAimingComponent::SetTurrent(UTankTurrent* TurrentToSet)
 { 
 	Turrent = TurrentToSet;
+}
+
+ECrosshairState UTankAimingComponent::GetCrosshairState() const
+{
+	return CrosshairState;
+}
+
+void UTankAimingComponent::SetCrosshairState(ECrosshairState val)
+{
+	CrosshairState = val; 
+}
+
+int UTankAimingComponent::GetAmmo() const 
+{
+	return TotalAmmo; 
+}
+
+void UTankAimingComponent::SetAmmo(int val) 
+{ 
+	TotalAmmo = val; 
 }
