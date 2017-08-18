@@ -58,14 +58,17 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Firing")
 	float ReloadTimeInSeconds = 2;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
+	int32 TotalAmmo = 3;
+
 	ECrosshairState GetCrosshairState() const;
 	void SetCrosshairState(ECrosshairState val);
 
 	UFUNCTION(BlueprintCallable, Category = "Setup")
-	void SetAmmo(int val);
+	void SetAmmo(int32 val);
 
 	UFUNCTION(BlueprintCallable, Category = "Setup")
-	int GetAmmo() const;
+	int32 GetAmmo() const;
 
 private:
 	virtual void BeginPlay() override;
@@ -81,6 +84,4 @@ private:
 	double LastFireTime = 0;
 	FVector AimDirection = FVector();
 
-	UPROPERTY(EditAnywhere, Category = "Firing")
-	int TotalAmmo = 3;
 };

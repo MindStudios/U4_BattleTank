@@ -140,12 +140,12 @@ void UTankAimingComponent::SetCrosshairState(ECrosshairState val)
 	CrosshairState = val; 
 }
 
-int UTankAimingComponent::GetAmmo() const 
+int32 UTankAimingComponent::GetAmmo() const 
 {
 	return TotalAmmo; 
 }
 
-void UTankAimingComponent::SetAmmo(int val) 
+void UTankAimingComponent::SetAmmo(int32 val) 
 { 
 	TotalAmmo = val; 
 }

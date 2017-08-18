@@ -8,6 +8,9 @@
 
 // Forward Declaration
 class UProjectileMovementComponent;
+class UStaticMeshComponent;
+class UParticleSystemComponent;
+class URadialForceComponent;
 
 UCLASS()
 class BATTLETANKS_API AProjectile : public AActor
@@ -22,14 +25,32 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Setup")
+	void OnHitBP(UPrimitiveComponent* HitComponent);
+
 	
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	void Launch(float Speed);
 
 private:
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+
 	UProjectileMovementComponent* ProjectileMovementComponent = nullptr;
-	
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UParticleSystemComponent* LaunchBlast = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UStaticMeshComponent* CollisionMesh = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UParticleSystemComponent* ImpactBlast = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	URadialForceComponent* ExplosionForce = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	float DestroyDelay = 3;
 };
