@@ -16,7 +16,6 @@ void ATankAIController::Tick(float DeltaTime)
 	auto PlayerTank = Cast<ATank>(GetWorld()->GetFirstPlayerController()->GetPawn());
 
 	if (ensureMsgf(PlayerTank, TEXT("Tank is a null pointer"))) {
-		// TODO Move towards the player
 		MoveToActor(PlayerTank, AcceptanceRadius);
 
 		// Aim towards player
@@ -28,4 +27,24 @@ void ATankAIController::Tick(float DeltaTime)
 		}
 	}
 }
+
+void ATankAIController::SetPawn(APawn * InPawn)
+{
+	Super::SetPawn(InPawn);
+	if (InPawn)
+	{
+		auto PossessedTank = Cast<ATank>(InPawn);
+		if (!ensure(PossessedTank)) { return; }
+
+		// Subscribe to death event
+		PossessedTank->OnDeath.AddUniqueDynamic(this, &ATankAIController::OnTankDeath);
+	}
+}
+
+void ATankAIController::OnTankDeath()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Tank is Dead!"));
+	GetPawn()->DetachFromControllerPendingDestroy();
+}
+
 

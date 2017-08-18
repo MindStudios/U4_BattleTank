@@ -24,6 +24,8 @@ private:
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void SetPawn(APawn* InPawn) override;
+
 	void AimTowardsCrosshair();
 
 	bool GetSightRayHitLocation(FVector& OutHitLocation) const;
@@ -42,6 +44,9 @@ private:
 	float LineTraceRange = 1000000.f;
 
 	UTankAimingComponent* AimingComponent = nullptr;
+
+	UFUNCTION()
+	void OnTankDeath();
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Setup")

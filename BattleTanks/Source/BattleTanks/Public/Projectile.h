@@ -51,6 +51,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	URadialForceComponent* ExplosionForce = nullptr;
 
-	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UPROPERTY(VisibleAnywhere, Category = "Setup")
 	float DestroyDelay = 3;
+
+	UPROPERTY(EditAnywhere, Category = "Setup")
+	float ProjectileDmg = 25;
 };

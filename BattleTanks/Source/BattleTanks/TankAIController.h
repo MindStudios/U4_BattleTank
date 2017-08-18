@@ -6,16 +6,28 @@
 #include "AIController.h"
 #include "TankAIController.generated.h"
 
+
 UCLASS()
 class BATTLETANKS_API ATankAIController : public AAIController
 {
 	GENERATED_BODY()
 
 public:
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
+
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Setup") // TODO EditDefaultsOnly
 	float AcceptanceRadius = 300;
+
+
+
+private:
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
+
+	virtual void SetPawn(APawn* InPawn) override;
+
+	UFUNCTION()
+	void OnTankDeath();
 };

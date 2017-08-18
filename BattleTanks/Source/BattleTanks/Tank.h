@@ -11,6 +11,8 @@ class UTankAimingComponent; // TODO Refactor
 class UTankMovementComponent; // TODO Refactor
 class UTankTrack;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTankDelegate);
+
 UCLASS()
 class BATTLETANKS_API ATank : public APawn
 {
@@ -22,8 +24,25 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void MoveTrack(UTankTrack* Track, float Throttle);
 
+	UFUNCTION(BlueprintPure, Category = "Health")
+	float GetHealthPercent() const;
+
+	FTankDelegate OnDeath;
+
 private:
 	virtual void BeginPlay() override;
+
+	// Called by the engine when damage is delt
+	virtual float TakeDamage(float DamageAmount,
+		struct FDamageEvent const & DamageEvent,
+		class AController * EventInstigator,
+		AActor * DamageCauser) override;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	int32 StartingHealth = 100;
+
+	UPROPERTY(VisibleAnywhere, Category = "Health")
+	int32 CurrentHealth = StartingHealth;
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
